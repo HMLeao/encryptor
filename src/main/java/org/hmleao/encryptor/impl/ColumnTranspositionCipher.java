@@ -1,4 +1,4 @@
-package org.hmleao.encryptor.decorator;
+package org.hmleao.encryptor.impl;
 
 import org.hmleao.encryptor.Cipher;
 
