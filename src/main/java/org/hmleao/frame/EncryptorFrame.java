@@ -99,7 +99,7 @@ public class EncryptorFrame extends JFrame {
         private Cipher getCipher() {
             Cipher cipher = new DefaultCipher();
             if (hasCesarCipher) {
-                cipher = new CesarCipher(cipher);
+                cipher = new CesarCipher(cipher, 3);
             }
             if (hasRailFenceCipher) {
                 cipher = new RailFenceCipher(cipher);
