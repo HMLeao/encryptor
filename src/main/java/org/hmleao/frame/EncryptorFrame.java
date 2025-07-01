@@ -22,6 +22,9 @@ public class EncryptorFrame extends JFrame {
     JCheckBox transpositionCheckBox = new JCheckBox(TRANSPOSITION_TEXT);
     JCheckBox railFenceCheckBox = new JCheckBox(RAIL_FENCE_TEXT);
 
+    JTextArea textAreaInput = new JTextArea(10, 30);
+    JTextArea textAreaOutput = new JTextArea(10, 30);
+
     private boolean hasCesarCipher = false;
     private boolean hasRailFenceCipher = false;
     private boolean hasTranspositionCipher = false;
@@ -29,7 +32,7 @@ public class EncryptorFrame extends JFrame {
     public EncryptorFrame() {
         super("Criptografar uma mensagem");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400,300);
+        setSize(400,500);
         setLayout( new FlowLayout() );
 
         final var itemListenner = new CheckboxHandler();
@@ -38,10 +41,13 @@ public class EncryptorFrame extends JFrame {
         railFenceCheckBox.addItemListener(itemListenner);
         transpositionCheckBox.addItemListener(itemListenner);
 
-        final var textField = new JTextField(100);
-        textField.setEditable(true);
+        textAreaInput.setEditable(true);
+        textAreaInput.setLineWrap(true);
 
-        add(textField);
+        textAreaOutput.setEditable(false);
+        textAreaOutput.setLineWrap(true);
+
+        add(textAreaInput);
         add(cesarCheckBox);
         add(transpositionCheckBox);
         add(railFenceCheckBox);
@@ -51,6 +57,7 @@ public class EncryptorFrame extends JFrame {
 
         add(button);
 
+        add(textAreaOutput);
         setVisible(true);
     }
 
@@ -86,7 +93,7 @@ public class EncryptorFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Cipher cipher = getCipher();
-            System.out.println(cipher.encrypt("mensagem para criptografar com"));
+            textAreaOutput.setText(cipher.encrypt(textAreaInput.getText()));
         }
 
         private Cipher getCipher() {
