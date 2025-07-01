@@ -29,7 +29,7 @@ public class EncryptorFrame extends JFrame {
     public EncryptorFrame() {
         super("Criptografar uma mensagem");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400,100);
+        setSize(400,300);
         setLayout( new FlowLayout() );
 
         final var itemListenner = new CheckboxHandler();
@@ -38,6 +38,10 @@ public class EncryptorFrame extends JFrame {
         railFenceCheckBox.addItemListener(itemListenner);
         transpositionCheckBox.addItemListener(itemListenner);
 
+        final var textField = new JTextField(100);
+        textField.setEditable(true);
+
+        add(textField);
         add(cesarCheckBox);
         add(transpositionCheckBox);
         add(railFenceCheckBox);
@@ -81,6 +85,11 @@ public class EncryptorFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            Cipher cipher = getCipher();
+            System.out.println(cipher.encrypt("mensagem para criptografar com"));
+        }
+
+        private Cipher getCipher() {
             Cipher cipher = new DefaultCipher();
             if (hasCesarCipher) {
                 cipher = new CesarCipher(cipher);
@@ -91,7 +100,7 @@ public class EncryptorFrame extends JFrame {
             if (hasTranspositionCipher) {
                 cipher = new ColumnTranspositionCipher(cipher);
             }
-            System.out.println(cipher.encrypt("mensagem para criptografar"));
+            return cipher;
         }
     }
 }
