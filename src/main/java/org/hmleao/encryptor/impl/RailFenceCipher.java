@@ -1,5 +1,6 @@
 package org.hmleao.encryptor.impl;
 
+import org.hmleao.encryptor.AbstractCipher;
 import org.hmleao.encryptor.Cipher;
 
 public class RailFenceCipher extends AbstractCipher {

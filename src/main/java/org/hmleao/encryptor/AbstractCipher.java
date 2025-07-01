@@ -1,6 +1,4 @@
-package org.hmleao.encryptor.impl;
-
-import org.hmleao.encryptor.Cipher;
+package org.hmleao.encryptor;
 
 public abstract class AbstractCipher implements Cipher {
 
