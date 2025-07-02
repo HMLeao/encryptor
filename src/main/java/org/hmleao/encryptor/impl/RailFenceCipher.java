@@ -5,10 +5,11 @@ import org.hmleao.encryptor.Cipher;
 
 public class RailFenceCipher extends AbstractCipher {
 
-    private final int numOfRails = 3;
+    private final int numOfRails;
 
-    public RailFenceCipher(Cipher cipher) {
+    public RailFenceCipher(Cipher cipher, int numOfRails) {
         super(cipher);
+        this.numOfRails = numOfRails;
     }
 
     @Override

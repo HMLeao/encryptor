@@ -25,6 +25,9 @@ public class EncryptorFrame extends JFrame {
     JTextArea textAreaInput = new JTextArea(10, 30);
     JTextArea textAreaOutput = new JTextArea(10, 30);
 
+    JSpinner cesarSpinner;
+    JSpinner railFenceSpinner;
+
     private boolean hasCesarCipher = false;
     private boolean hasRailFenceCipher = false;
     private boolean hasTranspositionCipher = false;
@@ -32,7 +35,7 @@ public class EncryptorFrame extends JFrame {
     public EncryptorFrame() {
         super("Criptografar uma mensagem");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400,500);
+        setSize(350,500);
         setLayout( new FlowLayout() );
 
         final var itemListenner = new CheckboxHandler();
@@ -47,17 +50,28 @@ public class EncryptorFrame extends JFrame {
         textAreaOutput.setEditable(false);
         textAreaOutput.setLineWrap(true);
 
+        String[] cesarShiftValues = new String[] {"1", "2", "3", "4", "5"};
+        SpinnerListModel cesarShiftValuesModel = new SpinnerListModel(cesarShiftValues);
+        cesarSpinner = new JSpinner(cesarShiftValuesModel);
+
+
+        String[] numOfRailsValues = new String[] {"3", "4", "5", "6"};
+        SpinnerListModel numOfRailsModel = new SpinnerListModel(numOfRailsValues);
+        railFenceSpinner = new JSpinner(numOfRailsModel);
+
         add(textAreaInput);
+        add(textAreaOutput);
         add(cesarCheckBox);
+        add(cesarSpinner);
         add(transpositionCheckBox);
         add(railFenceCheckBox);
+        add(railFenceSpinner);
 
         var button = new JButton("Criptografar");
         button.addActionListener(itemListenner);
 
         add(button);
 
-        add(textAreaOutput);
         setVisible(true);
     }
 
@@ -99,10 +113,12 @@ public class EncryptorFrame extends JFrame {
         private Cipher getCipher() {
             Cipher cipher = new DefaultCipher();
             if (hasCesarCipher) {
-                cipher = new CesarCipher(cipher, 3);
+                int shiftValue = Integer.parseInt((String) cesarSpinner.getValue());
+                cipher = new CesarCipher(cipher, shiftValue);
             }
             if (hasRailFenceCipher) {
-                cipher = new RailFenceCipher(cipher);
+                int numOfRails = Integer.parseInt((String) railFenceSpinner.getValue());
+                cipher = new RailFenceCipher(cipher, numOfRails);
             }
             if (hasTranspositionCipher) {
                 cipher = new ColumnTranspositionCipher(cipher);

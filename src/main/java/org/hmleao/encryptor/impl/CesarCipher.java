@@ -7,9 +7,9 @@ public class CesarCipher extends AbstractCipher {
 
     private final int siftValue;
 
-    public CesarCipher(Cipher cipher, int siftValue) {
+    public CesarCipher(Cipher cipher, int shiftValue) {
         super(cipher);
-        this.siftValue = siftValue;
+        this.siftValue = shiftValue;
     }
 
     @Override
