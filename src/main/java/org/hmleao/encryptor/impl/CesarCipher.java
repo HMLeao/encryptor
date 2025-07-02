@@ -15,16 +15,16 @@ public class CesarCipher extends AbstractCipher {
     @Override
     public String doEncryption(String message) {
         StringBuilder result = new StringBuilder();
-
         var charArray = message.toCharArray();
         for (char c : charArray) {
-            if (c != ' ') {
-                int originalPosition = c - 'a';
-                int newPosition = (originalPosition + siftValue) % 26;
-                char newCharacter = (char) ('a' + newPosition);
-                result.append(newCharacter);
-            } else {
-                result.append(c);
+            switch (c) {
+                case ' ', ',', '.', '-' -> result.append(c);
+                default -> {
+                    int originalPosition = c - 'a';
+                    int newPosition = (originalPosition + siftValue) % 26;
+                    char newCharacter = (char) ('a' + newPosition);
+                    result.append(newCharacter);
+                }
             }
         }
         return result.toString();
