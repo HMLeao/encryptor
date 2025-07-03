@@ -22,8 +22,9 @@ public class EncryptorFrame extends JFrame {
     JCheckBox transpositionCheckBox = new JCheckBox(TRANSPOSITION_TEXT);
     JCheckBox railFenceCheckBox = new JCheckBox(RAIL_FENCE_TEXT);
 
-    JTextArea textAreaInput = new JTextArea(10, 30);
-    JTextArea textAreaOutput = new JTextArea(10, 30);
+    JTextArea textAreaInput = new JTextArea(5, 30);
+    JTextArea textAreaOutput = new JTextArea(5, 30);
+    JTextField transpositionKeyField = new JTextField(10);
 
     JSpinner cesarSpinner;
     JSpinner railFenceSpinner;
@@ -33,44 +34,62 @@ public class EncryptorFrame extends JFrame {
     private boolean hasTranspositionCipher = false;
 
     public EncryptorFrame() {
-        super("Criptografar uma mensagem");
+        super("Criptografar mensagem");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(350,500);
-        setLayout( new FlowLayout() );
+        setSize(400, 500);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        final var itemListenner = new CheckboxHandler();
+        final var itemListener = new CheckboxHandler();
 
-        cesarCheckBox.addItemListener(itemListenner);
-        railFenceCheckBox.addItemListener(itemListenner);
-        transpositionCheckBox.addItemListener(itemListenner);
+        cesarSpinner = new JSpinner(new SpinnerListModel(new String[]{"1", "2", "3", "4", "5"}));
+        railFenceSpinner = new JSpinner(new SpinnerListModel(new String[]{"3", "4", "5", "6"}));
 
-        textAreaInput.setEditable(true);
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createTitledBorder("Mensagem"));
         textAreaInput.setLineWrap(true);
+        textAreaInput.setWrapStyleWord(true);
+        inputPanel.add(new JScrollPane(textAreaInput), BorderLayout.CENTER);
 
-        textAreaOutput.setEditable(false);
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new GridLayout(3, 2, 5, 5));
+        optionsPanel.setBorder(BorderFactory.createTitledBorder("Parâmetros de criptografia"));
+
+        cesarCheckBox.addItemListener(itemListener);
+        railFenceCheckBox.addItemListener(itemListener);
+        transpositionCheckBox.addItemListener(itemListener);
+
+        optionsPanel.add(cesarCheckBox);
+        optionsPanel.add(cesarSpinner);
+        optionsPanel.add(railFenceCheckBox);
+        optionsPanel.add(railFenceSpinner);
+        optionsPanel.add(transpositionCheckBox);
+        optionsPanel.add(transpositionKeyField);
+
+
+        JPanel outputPanel = new JPanel(new BorderLayout());
+        outputPanel.setBorder(BorderFactory.createTitledBorder("Mensagem criptografada"));
         textAreaOutput.setLineWrap(true);
+        textAreaOutput.setWrapStyleWord(true);
+        textAreaOutput.setEditable(false);
+        outputPanel.add(new JScrollPane(textAreaOutput), BorderLayout.CENTER);
 
-        String[] cesarShiftValues = new String[] {"1", "2", "3", "4", "5"};
-        SpinnerListModel cesarShiftValuesModel = new SpinnerListModel(cesarShiftValues);
-        cesarSpinner = new JSpinner(cesarShiftValuesModel);
+        // Button
+        JButton encryptButton = new JButton("Criptografar");
+        encryptButton.addActionListener(itemListener);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(encryptButton);
 
+        // Add all panels to main layout
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(inputPanel);
+        centerPanel.add(optionsPanel);
+        centerPanel.add(outputPanel);
 
-        String[] numOfRailsValues = new String[] {"3", "4", "5", "6"};
-        SpinnerListModel numOfRailsModel = new SpinnerListModel(numOfRailsValues);
-        railFenceSpinner = new JSpinner(numOfRailsModel);
-
-        add(textAreaInput);
-        add(textAreaOutput);
-        add(cesarCheckBox);
-        add(cesarSpinner);
-        add(transpositionCheckBox);
-        add(railFenceCheckBox);
-        add(railFenceSpinner);
-
-        var button = new JButton("Criptografar");
-        button.addActionListener(itemListenner);
-
-        add(button);
+        add(centerPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -79,28 +98,13 @@ public class EncryptorFrame extends JFrame {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getItem() instanceof JCheckBox checkBox) {
-                var checkBoxText = checkBox.getText();
-                if (checkBox.isSelected()) {
-                    checkItems(checkBoxText);
-                } else {
-                    uncheckItems(checkBoxText);
+                String text = checkBox.getText();
+                boolean isSelected = checkBox.isSelected();
+                switch (text) {
+                    case CESAR_TEXT -> hasCesarCipher = isSelected;
+                    case RAIL_FENCE_TEXT -> hasRailFenceCipher = isSelected;
+                    case TRANSPOSITION_TEXT -> hasTranspositionCipher = isSelected;
                 }
-            }
-        }
-
-        private void checkItems(String checkBoxText) {
-            switch (checkBoxText) {
-                case CESAR_TEXT -> hasCesarCipher = true;
-                case RAIL_FENCE_TEXT -> hasRailFenceCipher = true;
-                case TRANSPOSITION_TEXT -> hasTranspositionCipher = true;
-            }
-        }
-
-        private void uncheckItems(String checkBoxText) {
-            switch (checkBoxText) {
-                case CESAR_TEXT -> hasCesarCipher = false;
-                case RAIL_FENCE_TEXT -> hasRailFenceCipher = false;
-                case TRANSPOSITION_TEXT -> hasTranspositionCipher = false;
             }
         }
 
@@ -117,11 +121,20 @@ public class EncryptorFrame extends JFrame {
                 cipher = new CesarCipher(cipher, shiftValue);
             }
             if (hasRailFenceCipher) {
-                int numOfRails = Integer.parseInt((String) railFenceSpinner.getValue());
-                cipher = new RailFenceCipher(cipher, numOfRails);
+                int rails = Integer.parseInt((String) railFenceSpinner.getValue());
+                cipher = new RailFenceCipher(cipher, rails);
             }
             if (hasTranspositionCipher) {
-                cipher = new ColumnTranspositionCipher(cipher, "31425");
+                String key = transpositionKeyField.getText().trim();
+                if (!key.matches("\\d+")) {
+                    JOptionPane.showMessageDialog(null,
+                            "A chave de transposição deve conter apenas dígitos (ex: 31425)",
+                            "Chave inválida",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                } else {
+                    cipher = new ColumnTranspositionCipher(cipher, key);
+                }
             }
             return cipher;
         }
