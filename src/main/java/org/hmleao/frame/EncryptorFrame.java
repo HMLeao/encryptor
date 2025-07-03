@@ -121,7 +121,7 @@ public class EncryptorFrame extends JFrame {
                 cipher = new RailFenceCipher(cipher, numOfRails);
             }
             if (hasTranspositionCipher) {
-                cipher = new ColumnTranspositionCipher(cipher);
+                cipher = new ColumnTranspositionCipher(cipher, "31425");
             }
             return cipher;
         }

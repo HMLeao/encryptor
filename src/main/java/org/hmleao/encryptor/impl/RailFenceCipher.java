@@ -14,13 +14,11 @@ public class RailFenceCipher extends AbstractCipher {
 
     @Override
     protected String doEncryption(String message) {
-        // rail fence cipher
         StringBuilder result = new StringBuilder();
         char[] messageArray = message.toCharArray();
         final char[][] railFence = new char[numOfRails][messageArray.length];
         int railCount = 0;
-        boolean upCount = false; // true for counting upwards, false for downwards
-        // filling the rail fence
+        boolean upCount = false;
         for (int i = 0; i < messageArray.length; i++) {
             char currentChar = messageArray[i];
             if (currentChar == ' ' || currentChar == ',' || currentChar == '.') continue;
@@ -38,7 +36,6 @@ public class RailFenceCipher extends AbstractCipher {
                 railCount++;
             }
         }
-        // reading from the filled rail fence
         for (int i = 0; i < numOfRails; i++) {
             for (int j = 0; j < messageArray.length; j++) {
                 if (railFence[i][j] == '\u0000') continue;
